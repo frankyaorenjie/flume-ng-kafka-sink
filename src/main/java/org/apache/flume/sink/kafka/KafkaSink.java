@@ -24,11 +24,21 @@ import org.apache.flume.Event;
 import org.apache.flume.EventDeliveryException;
 import org.apache.flume.Transaction;
 import org.apache.flume.conf.Configurable;
+import org.apache.flume.conf.ConfigurationException;
 import org.apache.flume.sink.AbstractSink;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
+/**
+ * A Sink of Kafka which get events from channels and publish to Kafka. I use this in our 
+ * company production environment which can hit 100k messages per second.
+ * <tt>zk.connect: </tt> the zookeeper ip kafka use.<p>
+ * <tt>topic: </tt> the topic to read from kafka.<p>
+ * <tt>batchSize: </tt> send serveral messages in one request to kafka. <p>
+ * <tt>producer.type: </tt> type of producer of kafka, async or sync is available.<o>
+ * <tt>serializer.class: </tt>{@kafka.serializer.StringEncoder}
+ */
 public class KafkaSink extends AbstractSink implements Configurable{
 	private static final Logger log = LoggerFactory.getLogger(KafkaSink.class);
 	private String topic;
@@ -59,6 +69,9 @@ public class KafkaSink extends AbstractSink implements Configurable{
 
 	public void configure(Context context) {
 		topic = context.getString("topic");
+		if(topic == null) {
+			throw new ConfigurationException("Kafka topic must be specified.");
+		}
 		producer = KafkaSinkUtil.getProducer(context);
 	}
 
