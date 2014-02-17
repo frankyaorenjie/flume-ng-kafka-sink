@@ -16,13 +16,8 @@
 package org.apache.flume.sink.kafka;
 
 import kafka.javaapi.producer.Producer;
-import kafka.javaapi.producer.ProducerData;
-
-import org.apache.flume.Channel;
-import org.apache.flume.Context;
-import org.apache.flume.Event;
-import org.apache.flume.EventDeliveryException;
-import org.apache.flume.Transaction;
+import kafka.producer.KeyedMessage;
+import org.apache.flume.*;
 import org.apache.flume.conf.Configurable;
 import org.apache.flume.conf.ConfigurationException;
 import org.apache.flume.sink.AbstractSink;
@@ -54,7 +49,7 @@ public class KafkaSink extends AbstractSink implements Configurable{
 				tx.rollback();
 				return Status.BACKOFF;
 			}
-			producer.send(new ProducerData<String, String>(topic, new String(e.getBody())));
+			producer.send(new KeyedMessage<String, String>(topic, new String(e.getBody())));
 			log.trace("Message: {}", e.getBody());
 			tx.commit();
 			return Status.READY;
