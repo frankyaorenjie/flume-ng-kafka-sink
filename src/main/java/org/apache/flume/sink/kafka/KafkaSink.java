@@ -44,6 +44,7 @@ import org.slf4j.LoggerFactory;
  * <tt>producer.type: </tt> type of producer of kafka, async or sync is
  * available.<o> <tt>serializer.class: </tt>{@kafka.serializer.StringEncoder
  * 
+ * 
  * }
  */
 public class KafkaSink extends AbstractSink implements Configurable {
@@ -56,19 +57,25 @@ public class KafkaSink extends AbstractSink implements Configurable {
 		Transaction tx = channel.getTransaction();
 		try {
 			tx.begin();
-			Event e = channel.take();
-			if (e == null) {
-				tx.rollback();
-				return Status.BACKOFF;
+			Event event = channel.take();
+			if (event == null) {
+				tx.commit();
+				return Status.READY;
+
 			}
-			producer.send(new ProducerData<String, String>(topic, new String(e
+			producer.send(new ProducerData<String, String>(topic, new String(event
 					.getBody())));
-			log.trace("Message: {}", e.getBody());
+			log.trace("Message: {}", event.getBody());
 			tx.commit();
 			return Status.READY;
 		} catch (Exception e) {
+			try {
+				tx.rollback();
+				return Status.BACKOFF;
+			} catch (Exception e2) {
+				log.error("Rollback Exception:{}", e2);
+			}		
 			log.error("KafkaSink Exception:{}", e);
-			tx.rollback();
 			return Status.BACKOFF;
 		} finally {
 			tx.close();
