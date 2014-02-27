@@ -19,7 +19,7 @@
 package org.apache.flume.sink.kafka;
 
 import kafka.javaapi.producer.Producer;
-import kafka.javaapi.producer.ProducerData;
+import kafka.producer.KeyedMessage;
 
 import org.apache.flume.Channel;
 import org.apache.flume.Context;
@@ -50,7 +50,7 @@ import org.slf4j.LoggerFactory;
 public class KafkaSink extends AbstractSink implements Configurable {
 	private static final Logger log = LoggerFactory.getLogger(KafkaSink.class);
 	private String topic;
-	private Producer<String, String> producer;
+	private Producer<byte[], byte[]> producer;
 
 	public Status process() throws EventDeliveryException {
 		Channel channel = getChannel();
@@ -63,8 +63,7 @@ public class KafkaSink extends AbstractSink implements Configurable {
 				return Status.READY;
 
 			}
-			producer.send(new ProducerData<String, String>(topic, new String(event
-					.getBody())));
+			producer.send(new KeyedMessage<byte[], byte[]>(this.topic, event.getBody()));
 			log.trace("Message: {}", event.getBody());
 			tx.commit();
 			return Status.READY;
