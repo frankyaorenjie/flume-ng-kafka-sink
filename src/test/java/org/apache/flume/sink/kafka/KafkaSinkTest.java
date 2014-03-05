@@ -18,14 +18,8 @@
  *******************************************************************************/
 package org.apache.flume.sink.kafka;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.*;
-
-import java.lang.reflect.Field;
-
 import kafka.javaapi.producer.Producer;
-import kafka.javaapi.producer.ProducerData;
-
+import kafka.producer.KeyedMessage;
 import org.apache.flume.Channel;
 import org.apache.flume.Event;
 import org.apache.flume.EventDeliveryException;
@@ -37,6 +31,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.lang.reflect.Field;
+
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.*;
 
 public class KafkaSinkTest {
 	private static final Logger log = LoggerFactory.getLogger(KafkaSinkTest.class);
@@ -83,7 +82,7 @@ public class KafkaSinkTest {
 		Status status = mockKafkaSink.process();
 		verify(mockChannel, times(1)).getTransaction();
 		verify(mockChannel, times(1)).take();
-		verify(mockProducer, times(1)).send((ProducerData<String, String>) any());
+		verify(mockProducer, times(1)).send((KeyedMessage<String, String>) any());
 		verify(mockTx, times(1)).commit();
 		verify(mockTx, times(0)).rollback();
 		verify(mockTx, times(1)).close();
@@ -97,7 +96,7 @@ public class KafkaSinkTest {
 		Status status = mockKafkaSink.process();
 		verify(mockChannel, times(1)).getTransaction();
 		verify(mockChannel, times(1)).take();
-		verify(mockProducer, times(0)).send((ProducerData<String, String>) any());
+		verify(mockProducer, times(0)).send((KeyedMessage<String, String>) any());
 		verify(mockTx, times(0)).commit();
 		verify(mockTx, times(1)).rollback();
 		verify(mockTx, times(1)).close();
