@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
  * <p/>
  * <tt>topic: </tt> the topic to read from kafka.
  * <p/>
- * <tt>batchSize: </tt> send serveral messages in one request to kafka.
+ * <tt>batchSize: </tt> send several messages in one request to kafka.
  * <p/>
  * <tt>producer.type: </tt> type of producer of kafka, async or sync is
  * available.<o> <tt>serializer.class: </tt>{@kafka.serializer.StringEncoder
@@ -98,7 +98,7 @@ public class KafkaSink extends AbstractSink implements Configurable {
             throw new ConfigurationException("Kafka topic must be specified.");
         }
 
-        partition = context.getString("partition");
+        partition = context.getString("partition.key");
 
         producer = KafkaSinkUtil.getProducer(context);
     }
