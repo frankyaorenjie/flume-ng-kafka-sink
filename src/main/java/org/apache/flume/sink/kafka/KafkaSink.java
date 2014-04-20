@@ -69,8 +69,8 @@ public class KafkaSink extends AbstractSink implements Configurable {
                 KeyedMessage<String, String> data = (partition.isEmpty()) ? new KeyedMessage<String, String>(topic,
                         eventData) : new KeyedMessage<String, String>(topic, partition, eventData);
 
-                producer.send(data);
                 log.info("Sending Message to Kafka : [" + topic + ":" + eventData + "]");
+                producer.send(data);
 
                 tx.commit();
                 status = Status.READY;
@@ -94,6 +94,7 @@ public class KafkaSink extends AbstractSink implements Configurable {
 
     public void configure(Context context) {
         topic = context.getString("topic");
+        log.info("topic is set as: " + topic);
         if (topic == null) {
             throw new ConfigurationException("Kafka topic must be specified.");
         }
