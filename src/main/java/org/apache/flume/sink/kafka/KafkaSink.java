@@ -53,6 +53,7 @@ public class KafkaSink extends AbstractSink implements Configurable {
 
 
     public Status process() throws EventDeliveryException {
+
         Status status = null;
         Channel channel = getChannel();
         Transaction tx = channel.getTransaction();
@@ -62,11 +63,13 @@ public class KafkaSink extends AbstractSink implements Configurable {
             if (event == null) {
                 tx.commit();
                 status =  Status.BACKOFF;
+                log.debug("null event data");
 
             } else {
 
+                log.debug("processing event data");
                 String eventData = new String(event.getBody(), DEFAULT_ENCODING);
-                KeyedMessage<String, String> data = (partition.isEmpty()) ? new KeyedMessage<String, String>(topic,
+                KeyedMessage<String, String> data = (partition == null || partition.isEmpty()) ? new KeyedMessage<String, String>(topic,
                         eventData) : new KeyedMessage<String, String>(topic, partition, eventData);
 
                 log.info("Sending Message to Kafka : [" + topic + ":" + eventData + "]");
@@ -74,7 +77,7 @@ public class KafkaSink extends AbstractSink implements Configurable {
 
                 tx.commit();
                 status = Status.READY;
-                log.info("Send message success");
+                log.debug("Send message successfully.");
             }
         } catch (Exception e) {
             try {
