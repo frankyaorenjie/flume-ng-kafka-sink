@@ -1,15 +1,24 @@
-*.class
+# Eclipse
+.classpath
+.project
+.settings/
 
-# Package Files #
+# Intellij
+.idea/
+.idea/libraries/
+*.iml
+*.iws
+TestIdea/
+
+# Mac
+.DS_Store
+
+# Maven
+log/
+target/
+
+# Package Files
+*.class
 *.jar
 *.war
 *.ear
-/target
-build
-bin/
-.project
-**/.springBean
-target/
-.classpath
-.settings/**
-
