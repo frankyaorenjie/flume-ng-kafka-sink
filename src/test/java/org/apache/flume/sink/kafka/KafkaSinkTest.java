@@ -24,7 +24,7 @@ import static org.mockito.Mockito.*;
 import java.lang.reflect.Field;
 
 import kafka.javaapi.producer.Producer;
-import kafka.javaapi.producer.ProducerData;
+import kafka.producer.KeyedMessage;
 
 import org.apache.flume.Channel;
 import org.apache.flume.Event;
@@ -83,7 +83,7 @@ public class KafkaSinkTest {
 		Status status = mockKafkaSink.process();
 		verify(mockChannel, times(1)).getTransaction();
 		verify(mockChannel, times(1)).take();
-		verify(mockProducer, times(1)).send((ProducerData<String, String>) any());
+		verify(mockProducer, times(1)).send((KeyedMessage<String, String>) any());
 		verify(mockTx, times(1)).commit();
 		verify(mockTx, times(0)).rollback();
 		verify(mockTx, times(1)).close();
@@ -97,7 +97,7 @@ public class KafkaSinkTest {
 		Status status = mockKafkaSink.process();
 		verify(mockChannel, times(1)).getTransaction();
 		verify(mockChannel, times(1)).take();
-		verify(mockProducer, times(0)).send((ProducerData<String, String>) any());
+		verify(mockProducer, times(0)).send((KeyedMessage<String, String>) any());
 		verify(mockTx, times(0)).commit();
 		verify(mockTx, times(1)).rollback();
 		verify(mockTx, times(1)).close();
