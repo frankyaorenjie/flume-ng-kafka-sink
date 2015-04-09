@@ -1,6 +1,8 @@
 flume-ng-kafka-sink
 ================
 
+ **ATTENTION** flume-ng-kafka-sink has been merged into flume 1.6 which will release soon. This repo **WILL NOT** in maintenance.
+
 This project is used for [flume-ng](https://github.com/apache/flume) to communicate with [kafka 0.7,2](http://kafka.apache.org/07/quickstart.html).
 
 Configuration of Kafka Sink
